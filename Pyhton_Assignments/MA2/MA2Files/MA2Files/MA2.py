@@ -21,6 +21,9 @@ def expression(wtok):
     while wtok.get_current() == '+':
         wtok.next()
         result = result + term(wtok)
+    while wtok.get_current() == '-':
+        wtok.next()
+        result = result - term(wtok)
     return result
 
 
@@ -29,6 +32,9 @@ def term(wtok):
     while wtok.get_current() == '*':
         wtok.next()
         result = result * factor(wtok)
+    while wtok.get_current() == '/':
+        wtok.next()
+        result = result / factor(wtok)
     return result
 
 
