@@ -10,38 +10,49 @@ Reviewed date:
 from tokenize import TokenError
 from MA2tokenizer import TokenizeWrapper
 
+PI =3.14
 
 class SyntaxError(Exception):
     def __init__(self, arg):
         self.arg = arg
-
-
-def expression(wtok):
-    result = term(wtok)
-    while wtok.get_current() == '+':
+    
+def assignment(wtok, dict):
+    result = expression(wtok, dict)
+    ctok = wtok.get_current()
+    while ctok == '=':
         wtok.next()
-        result = result + term(wtok)
-    while wtok.get_current() == '-':
+        ctok =  wtok.get_current()
+        print(ctok)
+        if ctok not in dict:
+            dict[ctok] = result
+        else:
+            result = dict[ctok]
+    return result
+
+def expression(wtok, dict):
+    result = term(wtok,dict)
+    ctok = wtok.get_current()
+    while ctok == '+' or ctok == '-' :
         wtok.next()
-        result = result - term(wtok)
+        result = (result + term(wtok,dict)) if ctok == '+' else (result - term(wtok,dict))
+        ctok =  wtok.get_current()
     return result
 
 
-def term(wtok):
-    result = factor(wtok)
-    while wtok.get_current() == '*':
+def term(wtok, dict):
+    result = factor(wtok, dict)
+    ctok = wtok.get_current()
+    while ctok == '*' or ctok == '/' :
         wtok.next()
-        result = result * factor(wtok)
-    while wtok.get_current() == '/':
-        wtok.next()
-        result = result / factor(wtok)
+        result = (result * factor(wtok,dict)) if ctok == '*' else (result / factor(wtok,dict))
+        ctok =  wtok.get_current()
     return result
 
 
-def factor(wtok):
+def factor(wtok, dict):
     if wtok.get_current() == '(':
         wtok.next()
-        result = expression(wtok)
+        result = expression(wtok,dict)
         if wtok.get_current() == ')':
             wtok.next()
         else:
@@ -49,12 +60,22 @@ def factor(wtok):
     elif wtok.is_number():
         result = float(wtok.get_current())
         wtok.next()
+    elif wtok.get_current() in dict:
+        result = dict[wtok.get_current()]
+        wtok.next()
+    elif wtok.get_current() == '-':
+        wtok.next()
+        result = -factor(wtok,dict)
+       
     else:
         raise SyntaxError('Expected number or (')
     return result
 
 
 def main():
+    var_dict={}
+    fn1_dict={}
+    fnl_dict={}
     print("Calculator version 0.1")
     while True:
         line = input("Input : ")
@@ -63,7 +84,8 @@ def main():
             if wtok.get_current() == 'quit':
                 break
             else:
-                result = expression(wtok)
+                result = assignment(wtok,var_dict)
+                #result = expression(wtok)
                 if wtok.is_at_end():
                     print('Result: ', result)
                 else:
@@ -76,7 +98,11 @@ def main():
 
         except TokenError:
             print('*** Syntax: Unbalanced parentheses')
-
+            
+        except ZeroDivisionError:
+             print(f"Error ocurred at '{wtok.get_current()}'" +
+                  f" just after '{wtok.get_previous()}'")
+            
     print('Bye!')
 
 
