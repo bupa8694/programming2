@@ -53,7 +53,7 @@ class TokenizeWrapper:
 
     def is_at_end(self):
         return self.current[0] == 0 or self.current[0] == 4 or \
-               self.current[1][0] == '#'
+               self.current[1][0] == '#' or self.current[0] == 1
                #self.current[0] == 55   # This test doesn't work everywhere
                                         # try to check on '#' instead
 
