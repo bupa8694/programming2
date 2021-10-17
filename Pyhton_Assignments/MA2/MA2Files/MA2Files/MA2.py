@@ -10,8 +10,8 @@ Reviewed date:
 from tokenize import TokenError
 from MA2tokenizer import TokenizeWrapper
 
-PI =3.14
-
+PI =3.141592653589793
+E = 2.718281828459045
 class SyntaxError(Exception):
     def __init__(self, arg):
         self.arg = arg
@@ -73,7 +73,7 @@ def factor(wtok, dict):
 
 
 def main():
-    var_dict={}
+    var_dict={'E':E,'PI':PI}
     fn1_dict={}
     fnl_dict={}
     print("Calculator version 0.1")
@@ -83,6 +83,9 @@ def main():
         try:
             if wtok.get_current() == 'quit':
                 break
+            elif wtok.get_current() == 'vars':
+                for k,v in var_dict.items():
+                    print(k,"   :",v)
             else:
                 result = assignment(wtok,var_dict)
                 #result = expression(wtok)
