@@ -11,7 +11,7 @@ def rub_fibs(td_lst):
             return fib(n-1) + fib(n-2)
     prev_time_delta = 1
     for idx,e in enumerate(td_lst):
-        pdb.set_trace()
+        #pdb.set_trace()
         tstart = time.time()
         fib(e)
         tstop = time.time()
@@ -24,6 +24,6 @@ def rub_fibs(td_lst):
         
 def foo():
     #pdb.run("rub_fibs([1,2,4,8,16])")
-    rub_fibs([1,2,4,8,16])
+    rub_fibs([25])
     
 foo()
