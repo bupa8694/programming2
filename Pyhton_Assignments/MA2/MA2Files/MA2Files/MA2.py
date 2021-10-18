@@ -22,11 +22,10 @@ def assignment(wtok, dict):
     while ctok == '=':
         wtok.next()
         ctok =  wtok.get_current()
-        print(ctok)
-        if ctok not in dict:
-            dict[ctok] = result
-        else:
-            result = dict[ctok]
+        dict[ctok] = result
+        result = dict[ctok]
+        wtok.next()
+        ctok = wtok.get_current()
     return result
 
 def expression(wtok, dict):
@@ -52,7 +51,8 @@ def term(wtok, dict):
 def factor(wtok, dict):
     if wtok.get_current() == '(':
         wtok.next()
-        result = expression(wtok,dict)
+        #while wtok.get_current() != ')':
+        result = assignment(wtok,dict)
         if wtok.get_current() == ')':
             wtok.next()
         else:
