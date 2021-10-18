@@ -9,19 +9,23 @@ Reviewed date:
 
 from tokenize import TokenError
 from MA2tokenizer import TokenizeWrapper
+from MA2_math import *
 
 PI =3.141592653589793
 E = 2.718281828459045
+
 class SyntaxError(Exception):
     def __init__(self, arg):
         self.arg = arg
-    
+
 def assignment(wtok, dict):
     result = expression(wtok, dict)
     ctok = wtok.get_current()
     while ctok == '=':
         wtok.next()
         ctok =  wtok.get_current()
+        if wtok.is_number():
+            raise SyntaxError("Required varianle name")
         dict[ctok] = result
         result = dict[ctok]
         wtok.next()
@@ -43,12 +47,28 @@ def term(wtok, dict):
     ctok = wtok.get_current()
     while ctok == '*' or ctok == '/' :
         wtok.next()
-        result = (result * factor(wtok,dict)) if ctok == '*' else (result / factor(wtok,dict))
+        val = factor(wtok,dict)
+        if ctok == '/' and val == 0:
+            raise EvaluationError("Dvision by zero")
+        result = (result * val) if ctok == '*' else (result / val)
         ctok =  wtok.get_current()
     return result
 
+def function_1(wtok, dict):
+    if wtok.is_name():
+        if wtok.get_current() in fn_1:
+            return True
+    return False
+
+
+def function_n(wtok, dict):
+    if wtok.is_name():
+        if wtok.get_current() in fn_n:
+            return True
+    return False
 
 def factor(wtok, dict):
+    #result = function_1(wtok, dict)
     if wtok.get_current() == '(':
         wtok.next()
         #while wtok.get_current() != ')':
@@ -57,6 +77,43 @@ def factor(wtok, dict):
             wtok.next()
         else:
             raise SyntaxError("Expected ')'")
+    elif function_1(wtok, dict):
+        func_name =''
+        func_name = wtok.get_current()
+        wtok.next()
+        if wtok.get_current() == '(':
+                wtok.next()
+                n = assignment(wtok,dict)
+                if func_name == 'log' and n < 0:
+                    raise EvaluationError("Invalid argument for {}".format(func_name))
+                elif func_name == 'fib' or func_name == 'fac' and  n.is_integer():
+                    raise EvaluationError("Invalid argument for {}".format(func_name))
+                result = fn_1[func_name](n)
+                if wtok.get_current() == ')':
+                    wtok.next()
+        else:
+            raise SyntaxError("Expected '(' after function name")
+    elif function_n(wtok, dict):
+        func_name =''
+        func_name = wtok.get_current()
+        wtok.next()
+        if wtok.get_current() == '(':
+            element_list=[]
+            wtok.next()
+            while wtok.get_current() !=')':
+                ele = assignment(wtok,dict)
+                element_list.append(ele)
+                print(ele)
+                if wtok.get_current() == ',':
+                    wtok.next()
+                elif wtok.get_current() != ')':
+                    raise SyntaxError("Expected ',' after argument")
+                
+            result = fn_n[func_name](element_list)
+            print(result)
+            wtok.next()
+        else:
+            raise SyntaxError("Expected '(' after function name")
     elif wtok.is_number():
         result = float(wtok.get_current())
         wtok.next()
@@ -66,16 +123,15 @@ def factor(wtok, dict):
     elif wtok.get_current() == '-':
         wtok.next()
         result = -factor(wtok,dict)
-       
+    elif wtok.get_current() not in dict:
+        raise SyntaxError('Variable not defined') 
     else:
         raise SyntaxError('Expected number or (')
     return result
 
 
 def main():
-    var_dict={'E':E,'PI':PI}
-    fn1_dict={}
-    fnl_dict={}
+    var_dict={'E':E,'PI':PI,'ans':0}
     print("Calculator version 0.1")
     while True:
         line = input("Input : ")
@@ -85,9 +141,15 @@ def main():
                 break
             elif wtok.get_current() == 'vars':
                 for k,v in var_dict.items():
-                    print(k,"   :",v)
+                    print(k,"   :",v) 
+            elif wtok.get_current() == 'file':
+                filename = input("Filename : ")
+                with open('filename') as f:
+                    lines = f.readlines()
+                print(lines)
             else:
                 result = assignment(wtok,var_dict)
+                var_dict['ans'] = result
                 #result = expression(wtok)
                 if wtok.is_at_end():
                     print('Result: ', result)
@@ -98,6 +160,9 @@ def main():
             print("*** Syntax: ", se.arg)
             print(f"Error ocurred at '{wtok.get_current()}'" +
                   f" just after '{wtok.get_previous()}'")
+
+        except EvaluationError as se:
+            print("*** Evaluation error: ", se.arg)
 
         except TokenError:
             print('*** Syntax: Unbalanced parentheses')
