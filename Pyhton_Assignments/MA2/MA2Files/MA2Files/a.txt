@@ -18,7 +18,7 @@ fib(3)                            # Fibonaccit numbers. Note integer!
 fac(5)                            # Factorial. Note integer
 fib(-2)                           # Illegal argument
 fac(2.5)                          # Illegal argument
-fib(100)                          # Big number
-fac(40)                           # Even bigger number
+fib(12)                           # Big number
+fac(10)                           # Even bigger number
 2 ++ 4*ans/0                      # Syntax error before evaluation error
 ans/0 + * x                       # Evaluation before syntaxerror
