@@ -99,7 +99,7 @@ class LinkedList:
     
     def remove(self, x):          # Compulsory
         if not self.first:
-            return 
+            return
         f = self.first
         if f.data == x:
             self.first = f.succ
@@ -146,17 +146,31 @@ class LinkedList:
         self._remove_all(x)
 
     
-    
+
     def __str__(self):            # Compulsary
-        pass
+        if self.length() == 0:
+            return '()'
+        return '('+', '.join(str(ele) for ele in self) + ')'
+
     
-    
+    # complexity of this function is Θ(n²)
     def merge(self, lst):         # Compulsory
-        pass
-    
+        if self.length() == 0:
+            return lst
+        elif lst.length() == 0:
+            return self
+        # linear complexity Θ(n) , time vary linearly with size of the elements
+        for ele in lst:
+            # linear Θ(n) assume element is biggest worst case  Ω(n)
+            self.insert(ele) 
+        return self
     
     def __getitem__(self, ind):   # Compulsory
-        pass
+        ind = ind if ind >= 0 else self.length()+ind
+        for idx, val in enumerate(self):
+            if idx == ind:
+                return val
+        raise IndexError
 
 
 class Person:                     # Compulsory to complete
@@ -165,7 +179,14 @@ class Person:                     # Compulsory to complete
         self.pnr = pnr
         
     def __str__(self):
-        return f"{self.name}:{self.pnr}"
+        return "{}:{}:".format(self.name,self.pnr)
+
+    def __lt__(self, other):
+        return self.pnr < other.pnr
+
+    def __le__(self, other):
+        return self.pnr <= other.pnr
+
     
 
 def main():

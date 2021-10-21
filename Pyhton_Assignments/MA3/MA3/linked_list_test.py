@@ -89,7 +89,7 @@ class Test(unittest.TestCase):
         lst.remove_all(6)
         self.assertEqual(lst.to_list(), [])
 
-    '''
+
     def test___str__(self):
         lst = LinkedList()
         self.assertEqual(str(lst), '()')
@@ -97,7 +97,8 @@ class Test(unittest.TestCase):
         self.assertEqual(str(lst), '(1)')
         lst.insert(2)
         self.assertEqual(str(lst), '(1, 2)')
-        
+
+
     def test_merge(self):
         lst1 = LinkedList()
         lst2 = LinkedList()
@@ -106,7 +107,7 @@ class Test(unittest.TestCase):
             lst2.insert(x+1)
         lst1.merge(lst2)
         self.assertEqual(lst1.to_list(), [1, 1, 2, 2, 3, 4, 7, 8, 9, 10])
-    
+
     def test___getitem__(self):
         lst = LinkedList()
         for x in [1, 2, 6]:
@@ -114,7 +115,19 @@ class Test(unittest.TestCase):
         self.assertEqual(lst[0], 1)
         self.assertEqual(lst[1], 2)
         self.assertEqual(lst[2], 6)
-    '''
+        self.assertEqual(lst[-1], 6)
+        self.assertEqual(lst[-3], 1)
+
+    def test_Persons_sorted(self):
+        p0 = Person("Macx", 1234567847)
+        p1 = Person("Buddhika",1234567890)
+        p2 = Person("Chaturanga",1234567809)
+        lst = LinkedList()
+        for x in [p0, p1, p2]:
+            lst.insert(x)
+        self.assertEqual(lst[0].pnr, 1234567809)
+        self.assertEqual(lst[1].pnr, 1234567847)
+        self.assertEqual(lst[2].pnr, 1234567890)
 
 if __name__ == "__main__":
     unittest.main()
