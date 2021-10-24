@@ -5,6 +5,7 @@ Unittests for the binary search tree methods
 """
 
 import unittest
+import pytest
 
 from bst import *
 from linked_list import *
@@ -16,7 +17,7 @@ class Test(unittest.TestCase):
         self.assertEqual(bst.height(), 0)
         bst.insert(5)
         self.assertEqual(bst.height(), 1)
-        bst.insert(2)        
+        bst.insert(2)
         self.assertEqual(bst.height(), 2)
         bst.insert(1)
         self.assertEqual(bst.height(), 3)
@@ -25,10 +26,10 @@ class Test(unittest.TestCase):
         bst.insert(8)
         self.assertEqual(bst.height(), 3)
         bst.insert(9)
-        self.assertEqual(bst.height(), 4)        
+        self.assertEqual(bst.height(), 4)
 
 
-        
+
     def test_remove(self):
         bst = BST()
         for x in [5, 3, 8, 1, 4, 6, 9, 2, 7]:
@@ -54,7 +55,7 @@ class Test(unittest.TestCase):
         bst.remove(9)
         self.assertEqual(str(bst), '<>') 
         
- 
+
     def test___str__(self):
         bst = BST()
         self.assertEqual(str(bst), '<>')
@@ -62,7 +63,8 @@ class Test(unittest.TestCase):
         self.assertEqual(str(bst), '<3>')
         bst.insert(2)
         self.assertEqual(str(bst), '<2, 3>')
-    
+
+
     def test_to_list(self):
         bst = BST()
         self.assertEqual(bst.to_list(), [])
@@ -80,7 +82,7 @@ class Test(unittest.TestCase):
             lst.insert(x)             
         self.assertEqual(str(bst.to_LinkedList()), str(lst))
         
-        
+
     def test_ipl(self):
         bst = BST()
         self.assertEqual(bst.ipl(), 0)
@@ -94,7 +96,7 @@ class Test(unittest.TestCase):
         self.assertEqual(bst.ipl(), 8)
         bst.insert(1)
         self.assertEqual(bst.ipl(), 11)
-        
+
 
 if __name__ == "__main__":
     unittest.main()
