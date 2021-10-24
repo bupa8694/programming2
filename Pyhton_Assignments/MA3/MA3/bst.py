@@ -110,25 +110,20 @@ class BST:
         else:
             return 1 + self._size(r.left) + self._size(r.right)
 
-    def sizeX(self):
-        size = 0
-        size += (1 for ele in self.root if ele.left or ele.right)
-        return size
+    # experimental
+    # def sizeX(self):
+    #   size = 0
+    #  size += (1 for ele in self.root if ele.left or ele.right)
+    # return size
 
     #
     #   Methods to be completed
     #
-    def _height(self, r, cnt):
-        cnt1 = 0
-        cnt2 = 0
-        if r.left is None and r.right is None:
-            return cnt
-        if r.left is not None:
-            cnt1 = self._height(r.left, cnt + 1)
-        if r.right is not None:
-            cnt2 = self._height(r.right, cnt + 1)
-        cnt = cnt1 if cnt1 > cnt2 else cnt2
-        return cnt
+    def _height(self, r):
+        if r is None:
+            return 0
+        else:
+            return 1 + max(self._height(r.left), self._height(r.right))
 
     def height(self):  # Compulsory
         if self.root is None:
@@ -136,7 +131,7 @@ class BST:
         r = self.root
         if r.left is None and r.right is None:
             return 1
-        return self._height(r, 1)
+        return self._height(r)
 
     def remove(self, key):
         self.root = self._remove(self.root, key)
@@ -211,7 +206,33 @@ class BST:
 
 
 def random_tree(n):  # Useful
-    pass
+    import random
+    bst = BST()
+    for x in range(n):
+        bst.insert(random.random())
+    return bst
+
+
+def fib(n):
+    if n <= 1:
+        return n, n
+    else:
+        return fib(n - 1)[0] + fib(n - 2)[0], n
+
+
+def multi_fib(fr=1, to=18):
+    from concurrent import futures as f
+
+    l = [i for i in range(fr, to + 1)]
+
+    with f.ProcessPoolExecutor() as ex:
+        results = ex.map(fib, l)
+
+    d = dict()
+    for value, key in results:
+        d[key] = value
+    print(d)
+    return d
 
 
 def main():
@@ -224,21 +245,17 @@ def main():
     print('size  : ', t.size())
     for k in [0, 1, 2, 5, 9]:
         print(f"contains({k}): {t.containsX(k)}")
-
-    import random
-    n_nodes = [1, 2, 4, 8, 16, 32, 64 , 128]
+    n_nodes = [1, 2, 4, 8, 16, 32, 64, 128]
     cum_ipl = 0
     for n in n_nodes:
-        bst = BST()
-        for x in range(n):
-            bst.insert(random.random())
+        bst = random_tree(n)
         ipl = bst.ipl()
         est_ipl = round(1.39 * n * log2(n), 2)
         cum_ipl += ipl
         print("BST size : ", bst.size(), " BST height : ", bst.height(), " BST IPL : ", ipl, \
-              " BST [IPL/n] Avg : ", round(ipl / n, 2), " EST IPL : ", est_ipl, "    IPL Δ: ", \
-              abs(round(ipl - est_ipl, 2)), " Cumulative IPL : ", cum_ipl)
-        print(bst.sizeX())
+                " BST [IPL/n] Avg : ", round(ipl / n, 2), " EST IPL : ", est_ipl, "    IPL Δ: ", \
+                abs(round(ipl - est_ipl, 2)), " Cumulative IPL : ", cum_ipl)
+    multi_fib()
 
 if __name__ == "__main__":
     main()
