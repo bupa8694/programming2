@@ -215,7 +215,10 @@ fib(100) :(
     
   
   
-  
+Measured time for 50 :7344420562.267303 microseconds 
+Measured time for 51 :10830484136.58142 microseconds 
+fib(51) theoratical : 11883272469.748496254 microseconds
+Delta Ratio for n = 51 is :1.4746546776234626
   
   
   

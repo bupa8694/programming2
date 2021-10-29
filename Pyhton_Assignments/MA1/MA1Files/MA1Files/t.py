@@ -24,6 +24,6 @@ def rub_fibs(td_lst):
         
 def foo():
     #pdb.run("rub_fibs([1,2,4,8,16])")
-    rub_fibs([25])
+    rub_fibs([50, 51])
     
 foo()
