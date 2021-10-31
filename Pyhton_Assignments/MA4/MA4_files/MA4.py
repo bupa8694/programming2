@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import concurrent.futures as future
+from time import perf_counter
 from integer import Integer
 import random
 import math
@@ -50,6 +52,29 @@ def scalar_of_point(point):
     return sum
 
 
+def calc_len_of_inpoints_parallel(n, d, epsilon=0.0001):
+    #print("Executing our Task on Process {}".format(os.getpid()))
+    points_set = set(gen_point(d, epsilon) for _ in range(n))
+    oulier_set = set(e for e in points_set if scalar_of_point(e) <= 1)
+    inlier_set = points_set - oulier_set
+    return len(inlier_set)
+
+
+def hyperspace_volume_parallel(n, d, n_process=10, epsilon=0.0001):
+    import functools
+    import concurrent.futures
+    N = n//n_process
+    with concurrent.futures.ProcessPoolExecutor(max_workers=n_process) as ex:
+        result_futures = list(map(lambda x: ex.submit(
+            calc_len_of_inpoints_parallel, N, d, epsilon), range(1, n_process+1)))
+        approx_pi = 4*(functools.reduce(lambda x, y: x+y,
+                       [e.result() for e in result_futures]))/n
+        hyp_vol_1 = (math.pi ** d / 2) / (math.gamma(d / 2 + 1))
+        print("Exact value for Vd(1)- ", hyp_vol_1)
+        print("Appoximated Pi for {}- ".format(n), approx_pi)
+        return (hyp_vol_1, approx_pi)
+
+
 def hyperspace_volume(n, d, epsilon=0.0001):
     points_set = set(gen_point(d, epsilon) for _ in range(n))
     oulier_set = set(e for e in points_set if scalar_of_point(e) <= 1)
@@ -82,9 +107,6 @@ def fib(n):
     return f.fib()
 
 
-from time import perf_counter
-
-
 def fn_timing_on_fib(fn_fib, n, ranging=True):
     time_stamps = []
     k = 1
@@ -112,6 +134,13 @@ def plot_timings(time_stamps, fn_name):
     plt.savefig("Facto_reuslts_for_" + fn_name + ".png")
 
 
+def parallel_hyperVol(no_processes, n, d):
+    with future.ProcessPoolExecutor(max_workers=no_processes) as ex:
+        future_res = ex.submit(hyperspace_volume, n, d)
+    #print(future_res.result())
+    return future_res.result()
+
+
 def main():
     '''
 	f = Integer(5)
@@ -120,20 +149,33 @@ def main():
 	print(f.get())
 	'''
     '''
-	epsilon = 0.0001
-	for n in [50,100,200,400,1000,10000,100000]:
-		generate_images(n, epsilon)
-	hyperspace_volume(100000, 2)
-	hyperspace_volume(100000, 11)
-	'''
+    epsilon = 0.0001
+    for n in [50,100,200,400,1000,10000,100000]:
+        generate_images(n, epsilon)
+    hyperspace_volume(100000, 2)
+    '''
+
+    t1_start = perf_counter()
+    hyperspace_volume(1000000, 11)
+    t1_stop = perf_counter()
+    delta = (t1_stop - t1_start)
+    print("Elapsed time for hyperspace volumen(1) ST seconds: {}".format(delta))
+
+    t1_start = perf_counter()
+    hyperspace_volume_parallel(1000000, 11)
+    t1_stop = perf_counter()
+    delta = (t1_stop - t1_start)
+    print("Elapsed time for hyperspace volumen(1) MT seconds: {}".format(delta))
 
     # for the sake of clarity first c++ integration
+    '''
     print("\n **** Numba Py timings ****")
     plot_timings(fn_timing_on_fib(fib_numba_python, 47), "numbPyFib")
     print("\n **** C++ Integratiopn timinings ****")
     plot_timings(fn_timing_on_fib(fib, 47), "cppFib")
     print("\n **** Pure Python timinings ****")
     plot_timings(fn_timing_on_fib(fib_pure_python, 47), "purePyFib")
+    '''
 
 
 if __name__ == '__main__':
