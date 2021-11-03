@@ -2,8 +2,8 @@
 
 Student: Pallimulla Kapugamage Buddhika Chaturanga
 Mail: bupa8694@student.uu.se
-Reviewed by:
-Date reviewed:
+Reviewed by: Tom Smedsaas
+Date reviewed: 2021-110-03
 """
 import numbers
 

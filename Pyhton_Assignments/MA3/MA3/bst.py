@@ -2,8 +2,8 @@
 
 Student: P.K Buddhika Chaturanga
 Mail: bupa8694@student.uu.se
-Reviewed by:
-Date reviewed:
+Reviewed by: Tom Smedsaas
+Date reviewed: 2021-110-03
 """
 from math import log2
 
@@ -183,8 +183,14 @@ class BST:
         return lst
 
     def _ipl(self, r, lvl):
+        if r == None:
+            return 0
+        else :
+            return lvl + self._ipl(r.left,lvl+1) + self._ipl(r.right,lvl+1)
+        ''''
         r_cnt = 0
         l_cnt = 0
+
         if not (r.right or r.left):
             return 0
         if r.left is not None:
@@ -196,13 +202,10 @@ class BST:
             r_cnt *= lvl
             r_cnt += self._ipl(r.right, lvl + 1)
         return r_cnt + l_cnt
+        '''
 
     def ipl(self):  # Compulsory
-        if self.root is None:
-            return 0
-        if not (self.root.right or self.root.left):
-            return 1
-        return 1 + self._ipl(self.root, 2)
+        return self._ipl(self.root, 1)
 
 
 def random_tree(n):  # Useful
@@ -212,7 +215,7 @@ def random_tree(n):  # Useful
         bst.insert(random.random())
     return bst
 
-
+'''
 def fib(n):
     if n <= 1:
         return n, n
@@ -233,7 +236,7 @@ def multi_fib(fr=1, to=18):
         d[key] = value
     print(d)
     return d
-
+'''
 
 def main():
     t = BST()
@@ -255,7 +258,7 @@ def main():
         print("BST size : ", bst.size(), " BST height : ", bst.height(), " BST IPL : ", ipl, \
                 " BST [IPL/n] Avg : ", round(ipl / n, 2), " EST IPL : ", est_ipl, "    IPL Δ: ", \
                 abs(round(ipl - est_ipl, 2)), " Cumulative IPL : ", cum_ipl)
-    multi_fib()
+    #multi_fib()
 
 if __name__ == "__main__":
     main()
