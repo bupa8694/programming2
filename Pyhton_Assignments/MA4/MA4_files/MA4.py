@@ -149,7 +149,7 @@ def plot_allinOne(purePy, numbaPy, cppPy):
     #plt.xticks([ele[0] for ele in time_stamps])
     #plt.yticks([ele[1] for ele in time_stamps])
     plt.scatter(*zip(*purePy), color="red", label="Pure Python Execution")
-    plt.scatter(*zip(*numbaPy), color="green", label="Numba Execution")
+    plt.scatter(*zip(*numbaPy), color="yellow", label="Numba Execution")
     plt.scatter(*zip(*cppPy), color="blue", label="CppRT Execution")
     plt.legend()
     plt.savefig("Facto_reuslts_for_AllinOne.png")
@@ -189,17 +189,17 @@ def main():
     '''
     import time
     print("\n **** Numba Py timings ****")
-    timeStamps_numba = fn_timing_on_fib(fib_numba_python, 35 ,46)
+    timeStamps_numba = fn_timing_on_fib(fib_numba_python, 35 ,45)
     plot_timings(timeStamps_numba, "numbPyFib")
     time.sleep(1)
 
     print("\n **** C++ Integratiopn timinings ****")
-    timeStamps_cpp = fn_timing_on_fib(fib, 35 ,46)
+    timeStamps_cpp = fn_timing_on_fib(fib, 35 ,45)
     plot_timings(timeStamps_cpp, "cppFib")
     time.sleep(1)
 
     print("\n **** Pure Python timinings ****")
-    timeStamps_purepy = fn_timing_on_fib(fib_pure_python, 35 ,46)
+    timeStamps_purepy = fn_timing_on_fib(fib_pure_python, 35 ,45)
     plot_timings(timeStamps_purepy, "purePyFib")
 
     plot_allinOne(timeStamps_purepy, timeStamps_numba, timeStamps_cpp)
