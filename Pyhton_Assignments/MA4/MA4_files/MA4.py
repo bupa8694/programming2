@@ -189,17 +189,17 @@ def main():
     '''
     import time
     print("\n **** Numba Py timings ****")
-    timeStamps_numba = fn_timing_on_fib(fib_numba_python, 35 ,45)
+    timeStamps_numba = fn_timing_on_fib(fib_numba_python, 30 ,45)
     plot_timings(timeStamps_numba, "numbPyFib")
     time.sleep(1)
 
     print("\n **** C++ Integratiopn timinings ****")
-    timeStamps_cpp = fn_timing_on_fib(fib, 35 ,45)
+    timeStamps_cpp = fn_timing_on_fib(fib, 30 ,45)
     plot_timings(timeStamps_cpp, "cppFib")
     time.sleep(1)
 
     print("\n **** Pure Python timinings ****")
-    timeStamps_purepy = fn_timing_on_fib(fib_pure_python, 35 ,45)
+    timeStamps_purepy = fn_timing_on_fib(fib_pure_python, 30 ,45)
     plot_timings(timeStamps_purepy, "purePyFib")
 
     plot_allinOne(timeStamps_purepy, timeStamps_numba, timeStamps_cpp)
