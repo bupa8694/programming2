@@ -111,11 +111,12 @@ def fib(n):
     return f.fib()
 
 
-def fn_timing_on_fib(fn_fib, n, ranging=True):
+def fn_timing_on_fib(fn_fib, frm, to, ranging=True):
     time_stamps = []
-    k = 1
+    k = frm
+    n = to
     if not ranging:
-        k = n
+        k = to
     for e in range(k, n + 1):
         t1_start = perf_counter()
         fn_fib(e)
@@ -184,22 +185,21 @@ def main():
 
     
     # for the sake of clarity first c++ integration
-    print("Fib(47) form C++ val is  ",fib(47))
-    
+    print("Fib(47) from C++-Py Integration value is  ",fib(47))
     '''
     import time
     print("\n **** Numba Py timings ****")
-    timeStamps_numba = fn_timing_on_fib(fib_numba_python, 40)
+    timeStamps_numba = fn_timing_on_fib(fib_numba_python, 35 ,46)
     plot_timings(timeStamps_numba, "numbPyFib")
     time.sleep(1)
 
     print("\n **** C++ Integratiopn timinings ****")
-    timeStamps_cpp = fn_timing_on_fib(fib, 40)
+    timeStamps_cpp = fn_timing_on_fib(fib, 35 ,46)
     plot_timings(timeStamps_cpp, "cppFib")
     time.sleep(1)
 
     print("\n **** Pure Python timinings ****")
-    timeStamps_purepy = fn_timing_on_fib(fib_pure_python, 40)
+    timeStamps_purepy = fn_timing_on_fib(fib_pure_python, 35 ,46)
     plot_timings(timeStamps_purepy, "purePyFib")
 
     plot_allinOne(timeStamps_purepy, timeStamps_numba, timeStamps_cpp)
