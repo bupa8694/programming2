@@ -1,9 +1,9 @@
 """
 Solutions to module 2 - A calculator
-Student: 
-Mail:
-Reviewed by:
-Reviewed date:
+Student: Pallimulla Kapugamage Buddhika Chaturanga
+Mail: bupa8694@student.uu.se
+Reviewed by: Tom Smedsaas
+Date reviewed: 2021-110-03
 """
 
 
@@ -24,7 +24,7 @@ def assignment(wtok, dict):
     while ctok == '=':
         wtok.next()
         ctok =  wtok.get_current()
-        if wtok.is_number():
+        if wtok.is_number(): #not name
             raise SyntaxError("Required varianle name")
         dict[ctok] = result
         result = dict[ctok]
