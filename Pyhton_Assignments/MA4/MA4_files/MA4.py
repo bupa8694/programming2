@@ -23,11 +23,11 @@ def generate_images(n, epsilon):
         point_set_within_circle)  # we can do render using original set and points within the circle  trick but set approach is more cleaner
 
     # approximationg pi
-    import math
     print("Theoritical Pi- ", round(math.pi, 4))
     approx_pi = round(4 * (len(point_set_within_circle)) / len(point_set), 4)
     print("Appoximated Pi for {}- ".format(n), approx_pi)
     # now we draw unit circle green color
+
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -55,8 +55,8 @@ def scalar_of_point(point):
 def calc_len_of_inpoints_parallel(n, d, epsilon=0.0001):
     #print("Executing our Task on Process {}".format(os.getpid()))
     points_set = set(gen_point(d, epsilon) for _ in range(n))
-    oulier_set = set(e for e in points_set if scalar_of_point(e) <= 1)
-    inlier_set = points_set - oulier_set
+    inlier_set = set(e for e in points_set if scalar_of_point(e) <= 1)
+    oulier_set = points_set - inlier_set
     return len(inlier_set)
 
 
@@ -65,11 +65,15 @@ def hyperspace_volume_parallel(n, d, n_process=10, epsilon=0.0001):
     import concurrent.futures
     N = n//n_process
     with concurrent.futures.ProcessPoolExecutor(max_workers=n_process) as ex:
+
         result_futures = list(map(lambda x: ex.submit(
             calc_len_of_inpoints_parallel, N, d, epsilon), range(1, n_process+1)))
-        approx_pi = 4*(functools.reduce(lambda x, y: x+y,
+
+        approx_pi = 2**d*(functools.reduce(lambda x, y: x+y,
                        [e.result() for e in result_futures]))/n
+
         hyp_vol_1 = (math.pi ** d / 2) / (math.gamma(d / 2 + 1))
+        
         print("Exact value for Vd(1)- ", hyp_vol_1)
         print("Appoximated Pi for {}- ".format(n), approx_pi)
         return (hyp_vol_1, approx_pi)
@@ -77,12 +81,12 @@ def hyperspace_volume_parallel(n, d, n_process=10, epsilon=0.0001):
 
 def hyperspace_volume(n, d, epsilon=0.0001):
     points_set = set(gen_point(d, epsilon) for _ in range(n))
-    oulier_set = set(e for e in points_set if scalar_of_point(e) <= 1)
-    inlier_set = points_set - oulier_set
+    inlier_set = set(e for e in points_set if scalar_of_point(e) <= 1)
+    oulier_set = points_set - inlier_set
 
     hyp_vol_1 = (math.pi ** d / 2) / (math.gamma(d / 2 + 1))
     print("Exact value for Vd(1)- ", hyp_vol_1)
-    approx_pi = round(4 * (len(inlier_set)) / len(points_set), 4)
+    approx_pi = round(2**d * (len(inlier_set)) / len(points_set), 4)
     print("Appoximated Pi for {}- ".format(n), approx_pi)
     return (hyp_vol_1, approx_pi)
 
@@ -128,10 +132,27 @@ def plot_timings(time_stamps, fn_name):
     import matplotlib.pyplot as plt
     plt.xlabel("Number of iterations - n")
     plt.ylabel("Execution time in seconds")
-    # plt.xticks([ele[0] for ele in time_stamps])
-    # plt.yticks([ele[1] for ele in time_stamps])
-    plt.scatter(*zip(*time_stamps), color="blue")
+    #plt.xticks([ele[0] for ele in time_stamps])
+    #plt.yticks([ele[1] for ele in time_stamps])
+    plt.scatter(*zip(*time_stamps), color="gray", label=fn_name)
+    plt.legend()
     plt.savefig("Facto_reuslts_for_" + fn_name + ".png")
+    plt.close()
+
+def plot_allinOne(purePy, numbaPy, cppPy):
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    plt.xlabel("Number of iterations - n")
+    plt.ylabel("Execution time in seconds")
+    #plt.xticks([ele[0] for ele in time_stamps])
+    #plt.yticks([ele[1] for ele in time_stamps])
+    plt.scatter(*zip(*purePy), color="red", label="Pure Python Execution")
+    plt.scatter(*zip(*numbaPy), color="green", label="Numba Execution")
+    plt.scatter(*zip(*cppPy), color="blue", label="CppRT Execution")
+    plt.legend()
+    plt.savefig("Facto_reuslts_for_AllinOne.png")
+    plt.close()
 
 
 def parallel_hyperVol(no_processes, n, d):
@@ -143,23 +164,17 @@ def parallel_hyperVol(no_processes, n, d):
 
 def main():
     '''
-	f = Integer(5)
-	print(f.get())
-	f.set(7)
-	print(f.get())
-	'''
-    '''
     epsilon = 0.0001
     for n in [50,100,200,400,1000,10000,100000]:
         generate_images(n, epsilon)
     hyperspace_volume(100000, 2)
-    '''
-
+    
     t1_start = perf_counter()
     hyperspace_volume(1000000, 11)
     t1_stop = perf_counter()
     delta = (t1_stop - t1_start)
     print("Elapsed time for hyperspace volumen(1) ST seconds: {}".format(delta))
+
 
     t1_start = perf_counter()
     hyperspace_volume_parallel(1000000, 11)
@@ -167,16 +182,32 @@ def main():
     delta = (t1_stop - t1_start)
     print("Elapsed time for hyperspace volumen(1) MT seconds: {}".format(delta))
 
+    
     # for the sake of clarity first c++ integration
+    print("Fib(47) form C++ val is  ",fib(47))
+    
     '''
+    import time
     print("\n **** Numba Py timings ****")
-    plot_timings(fn_timing_on_fib(fib_numba_python, 47), "numbPyFib")
+    timeStamps_numba = fn_timing_on_fib(fib_numba_python, 40)
+    plot_timings(timeStamps_numba, "numbPyFib")
+    time.sleep(1)
+
     print("\n **** C++ Integratiopn timinings ****")
-    plot_timings(fn_timing_on_fib(fib, 47), "cppFib")
+    timeStamps_cpp = fn_timing_on_fib(fib, 40)
+    plot_timings(timeStamps_cpp, "cppFib")
+    time.sleep(1)
+
     print("\n **** Pure Python timinings ****")
-    plot_timings(fn_timing_on_fib(fib_pure_python, 47), "purePyFib")
+    timeStamps_purepy = fn_timing_on_fib(fib_pure_python, 40)
+    plot_timings(timeStamps_purepy, "purePyFib")
+
+    plot_allinOne(timeStamps_purepy, timeStamps_numba, timeStamps_cpp)
     '''
-
-
+    f = Integer(5)
+    print(f.get())
+    f.set(7)
+    print(f.get())
+    '''
 if __name__ == '__main__':
     main()

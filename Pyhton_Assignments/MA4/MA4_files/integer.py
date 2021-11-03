@@ -21,7 +21,7 @@ class Integer(object):
 		lib.Integer_set(self.obj, val)
 
 	def fib(self):
-		lib.Integer_fib(self.obj)
+		return lib.Integer_fib(self.obj)
 
 	def __del__(self):
 		return lib.Integer_delete(self.obj)
